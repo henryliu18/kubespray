@@ -1,1 +1,1 @@
-Ansible/Kubespray
+Ansible/Kubespray in Docker image
