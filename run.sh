@@ -15,8 +15,7 @@ declare -a ALLIPS=$ALLIPS && \
 tLen=${#ALLIPS[@]}
 
 # Clone kubespray repository
-apk add git && \
-git clone https://github.com/kubernetes-sigs/kubespray.git && pip3 install -r $PWD/kubespray/requirements.txt && cp -rfp kubespray/inventory/sample kubespray/inventory/mycluster
+apk add git && git clone https://github.com/kubernetes-sigs/kubespray.git && pip3 install -r $PWD/kubespray/requirements.txt && cp -rfp kubespray/inventory/sample kubespray/inventory/mycluster
 
 # Generate ssh key for this container and copy public key across target hosts
 ssh-keygen
