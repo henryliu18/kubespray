@@ -14,8 +14,9 @@ docker build . \
 docker run \
 --rm \
 -it \
--e ALLIPS="(192.168.56.133 192.168.56.162)" \
--e AUSER=root \
 -v "C:\key-folder:/key" \
+-e KEYFILE="pkey.ppk"
+-e ALLIPS="(192.168.56.133 192.168.56.162)" \
+-e AUSER="root" \
 <IMAGE-NAME>
 ```
