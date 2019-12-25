@@ -8,7 +8,7 @@ function genkey () {
   done
 }
 
-function addknown_hosts () {
+function add_known_hosts () {
   cp $1 /tmp
   chmod 700 /tmp/"$PKEY"
   for (( i=0; i<${tLen}; i++ ));
@@ -45,7 +45,7 @@ clear
 # If $PPATH/$PKEY is NOT found then generate ssh key for this container and copy public key across target hosts
 # If $PPATH/$PKEY is found then establish a ssh connection using existing key which will add remote host to ~/.ssh/known_hosts in the container
 if [ -f "$PPATH/$PKEY" ]; then
-  addknown_hosts "$PPATH/$PKEY"
+  add_known_hosts "$PPATH/$PKEY"
 else
   genkey
 fi
