@@ -1,6 +1,24 @@
 #!/bin/bash
 
-echo "Target hosts are $ALLIPS"
+function genkey () {
+  ssh-keygen
+  for (( i=0; i<${tLen}; i++ ));
+  do
+    ssh-copy-id ${AUSER}@${ALLIPS[$i]}
+  done
+}
+
+function addknown_hosts () {
+  cp $1 /tmp
+  chmod 700 /tmp/"$PKEY"
+  for (( i=0; i<${tLen}; i++ ));
+  do
+    ssh -i /tmp/"$PKEY" ${AUSER}@${ALLIPS[$i]} uptime
+  done
+}
+
+echo "The host running docker MUST on the same network of $ALLIPS"
+echo "K8s hosts are $ALLIPS"
 echo "prerequisites are"
 echo "1) $ALLIPS must have access to the Internet"
 echo "2) $ALLIPS allow IPv4 forwarding"
@@ -17,12 +35,15 @@ tLen=${#ALLIPS[@]}
 # Clone kubespray repository
 apk add git && git clone https://github.com/kubernetes-sigs/kubespray.git && pip3 install -r $PWD/kubespray/requirements.txt && cp -rfp kubespray/inventory/sample kubespray/inventory/mycluster
 
-# Generate ssh key for this container and copy public key across target hosts
-ssh-keygen
-for (( i=0; i<${tLen}; i++ ));
-do
-  ssh-copy-id ${AUSER}@${ALLIPS[$i]}
-done
+# If $PPATH/$PKEY is NOT found then generate ssh key for this container and copy public key across target hosts
+# If $PPATH/$PKEY is found then establish a ssh connection using existing key which will add remote host to ~/.ssh/known_hosts in the container
+PPATH=/key
+PKEY=pkey.ppk
+if [ -f "$PPATH/$PKEY" ]; then
+  addknown_hosts "$PPATH/$PKEY"
+else
+  genkey
+fi
 
 # Generate Ansible hosts file for this project
 echo "[servers]" > /etc/ansible/hosts && \
@@ -34,4 +55,9 @@ done
 # Ansible Playbook start
 IPS=("${ALLIPS[@]}")
 CONFIG_FILE=$PWD/kubespray/inventory/mycluster/hosts.yaml python3 $PWD/kubespray/contrib/inventory_builder/inventory.py ${IPS[@]}
-/usr/bin/ansible-playbook --flush-cache -i $PWD/kubespray/inventory/mycluster/hosts.yaml  --become --become-user=root --ask-become-pass -e ansible_user=${AUSER} $PWD/kubespray/cluster.yml
+
+if [ -f "$PPATH/$PKEY" ]; then
+  /usr/bin/ansible-playbook --flush-cache -i $PWD/kubespray/inventory/mycluster/hosts.yaml  --become --become-user=root --private-key="/tmp/$PKEY" -e ansible_user=${AUSER} $PWD/kubespray/cluster.yml
+else
+  /usr/bin/ansible-playbook --flush-cache -i $PWD/kubespray/inventory/mycluster/hosts.yaml  --become --become-user=root --ask-become-pass -e ansible_user=${AUSER} $PWD/kubespray/cluster.yml
+fi
