@@ -9,7 +9,8 @@ docker build . \
 ### Run container
 #### Replacing value of ALLIPS for your cluster nodes' IP in the format below.
 #### Replacing value of AUSER for your cluster nodes' credential (sudo required for non-root account)
-#### Replacing C:\key-folder with your folder that contains openssh private key file (pkey.ppk), the mapping location in container MUST be /key.  If password authentication is used then simply remove -v option
+#### Replacing C:\key-folder with your folder that contains openssh private key file.  The mapping location in container MUST be /key.  If password authentication is used then simply remove -v option
+#### Replacing value of KEYFILE for your private key file name that is located in your key folder
 ```bash
 docker run \
 --rm \
@@ -20,3 +21,6 @@ docker run \
 -e AUSER="root" \
 <IMAGE-NAME>
 ```
+
+#### Docker hub repository  
+https://hub.docker.com/r/henryhhl18/kubespray
