@@ -51,9 +51,6 @@ else
   genkey
 fi
 
-# Clone kubespray repository
-apk add git && git clone https://github.com/kubernetes-sigs/kubespray.git && pip3 install -r $PWD/kubespray/requirements.txt && cp -rfp kubespray/inventory/sample kubespray/inventory/mycluster
-
 # Generate Ansible hosts file for this project
 echo "[servers]" > /etc/ansible/hosts && \
 for (( i=0; i<${tLen}; i++ ));
