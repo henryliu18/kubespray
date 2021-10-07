@@ -2,8 +2,8 @@
 
 ### Build image
 ```bash
-docker build . \
--t <IMAGE-NAME>
+sudo docker build . \
+-t my_kubespray
 ```
 
 #### Replacing value of ALLIPS for your cluster nodes' IP in the format below.
