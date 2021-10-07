@@ -4,6 +4,10 @@ WORKDIR /home/alpine
 RUN apk update && \
 apk add gcc && \
 apk add git && \
+apk add python3-dev && \
+apk add musl-dev && \
+apk add libffi-dev && \
+apk add openssl-dev && \
 git clone https://github.com/kubernetes-sigs/kubespray.git && \
 pip3 uninstall ansible -y && \
 pip3 install -r $PWD/kubespray/requirements.txt && \
